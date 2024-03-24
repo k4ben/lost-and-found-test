@@ -1,0 +1,66 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "cockroachdb"
+  url      = env("DATABASE_URL")
+}
+
+model Category {
+  ID               BigInt     @id @default(autoincrement())
+  Name             String     @db.String(255)
+  ParentCategoryID BigInt?
+  Category         Category?  @relation("CategoryToCategory", fields: [ParentCategoryID], references: [ID], onDelete: NoAction, onUpdate: NoAction)
+  other_Category   Category[] @relation("CategoryToCategory")
+  Item             Item[]
+}
+
+model Image {
+  ID     BigInt @id @default(autoincrement())
+  URL    String @db.String(255)
+  ItemID BigInt
+  Item   Item   @relation(fields: [ItemID], references: [ID], onDelete: NoAction, onUpdate: NoAction)
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model Item {
+  ID                                BigInt   @id @default(autoincrement())
+  UserID                            BigInt
+  CategoryID                        BigInt
+  FoundItemID                       BigInt?
+  LostItemID                        BigInt?
+  Type                              String   @db.String(255)
+  Description                       String   @db.String(255)
+  LocationID                        BigInt
+  CreatedAt                         DateTime @db.Timestamp(6)
+  Image                             Image[]
+  Category                          Category @relation(fields: [CategoryID], references: [ID], onDelete: NoAction, onUpdate: NoAction)
+  Item_Item_FoundItemIDToItem       Item?    @relation("Item_FoundItemIDToItem", fields: [FoundItemID], references: [ID], onDelete: NoAction, onUpdate: NoAction)
+  other_Item_Item_FoundItemIDToItem Item[]   @relation("Item_FoundItemIDToItem")
+  Location                          Location @relation(fields: [LocationID], references: [ID], onDelete: NoAction, onUpdate: NoAction)
+  Item_Item_LostItemIDToItem        Item?    @relation("Item_LostItemIDToItem", fields: [LostItemID], references: [ID], onDelete: NoAction, onUpdate: NoAction)
+  other_Item_Item_LostItemIDToItem  Item[]   @relation("Item_LostItemIDToItem")
+  User                              User     @relation(fields: [UserID], references: [ID], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model Location {
+  ID       BigInt @id @default(autoincrement())
+  Name     String @db.String(255)
+  SchoolID BigInt
+  Item     Item[]
+  School   School @relation(fields: [SchoolID], references: [ID], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model School {
+  ID       BigInt     @id @default(autoincrement())
+  Name     String     @db.String(255)
+  Location Location[]
+}
+
+model User {
+  ID    BigInt @id @default(autoincrement())
+  Name  String @db.String(255)
+  Email String @db.String(255)
+  Item  Item[]
+}

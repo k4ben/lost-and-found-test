@@ -13,7 +13,7 @@
 	$: lostItems = data.user.Item.filter((i) => i.Type == 'LostItem');
 	$: foundItems = data.user.Item.filter((i) => i.Type == 'FoundItem');
 
-	onMount(() => document.documentElement.setAttribute('data-theme', 'dark'));
+	onMount(() => document.documentElement.setAttribute('data-theme', 'light'));
 </script>
 
 <div class="bg-base-200 h-screen">

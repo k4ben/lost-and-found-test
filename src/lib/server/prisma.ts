@@ -31,3 +31,23 @@ export async function getUserById(id: string | bigint) {
   });
   return user;
 }
+
+export async function addItem(Type: "LostItem" | "FoundItem", Description: string, CategoryID: bigint, UserID: bigint, SchoolID: bigint, locationName: string) {
+  const transaction = await prisma.$transaction(async tx => {
+    const createLocation = await tx.location.create({
+      data: {
+        Name: locationName,
+        SchoolID
+      }
+    })
+    const insert = await tx.item.create({
+      data: {
+        Description,
+        Type,
+        CategoryID,
+        UserID,
+        LocationID: createLocation.ID
+      }
+    })
+  })
+}

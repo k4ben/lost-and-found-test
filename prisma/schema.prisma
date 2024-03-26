@@ -33,7 +33,7 @@ model Item {
   Type                              String   @db.String(255)
   Description                       String   @db.String(255)
   LocationID                        BigInt
-  CreatedAt                         DateTime @db.Timestamp(6)
+  CreatedAt                         DateTime @default(now()) @db.Timestamp(6)
   Image                             Image[]
   Category                          Category @relation(fields: [CategoryID], references: [ID], onDelete: NoAction, onUpdate: NoAction)
   Item_Item_FoundItemIDToItem       Item?    @relation("Item_FoundItemIDToItem", fields: [FoundItemID], references: [ID], onDelete: NoAction, onUpdate: NoAction)
